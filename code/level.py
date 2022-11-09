@@ -6,10 +6,25 @@ from setting import tile_size, screen_height
 from support import *
 from enemy import Enemy
 from player import *
+from game_data import levels
+
+
 class Level:
-    def __init__(self,level_data,surface):
+    def __init__(self,current_level,surface,create_overworld,start_time):
         #level setup
         self.display_surface = surface 
+        level_data = levels[current_level]
+        level_content = level_data['content']
+        self.new_max_level = level_data['unlock']
+        self.start_time = start_time
+        # overworld connection  
+        self.create_overworld = create_overworld
+        self.current_level = current_level
+        
+        #coins setup
+        coin_layout = import_csv_layout(level_data['coins'])
+        self.coin_sprites = self.create_tile_group(coin_layout,'coins')
+        
         # terrain setup
         terrain_layout = import_csv_layout(level_data['terrain'])
         self.terrain_sprites = self.create_tile_group(terrain_layout,'terrain')
@@ -28,6 +43,13 @@ class Level:
         self.world_shift = -10
         self.current_x = 0
     
+    def input(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_RETURN]:
+            self.create_overworld(self.current_level,self.new_max_level)
+        if keys[pygame.K_ESCAPE]:
+            self.create_overworld(self.current_level,0)
+
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
 
@@ -48,6 +70,9 @@ class Level:
 
                     if type == 'constraint':
                       sprite = Tile(tile_size,x,y)
+
+                    if type == 'coins':
+                        sprite = AnimateTile(tile_size,x,y,'C:/Users/pongsapadnet/Desktop/code/game/graphics/coin/gold')
 
                     sprite_group.add(sprite)
 
@@ -113,6 +138,7 @@ class Level:
             player.on_left = False
         if player.on_right and (player.rect.right<self.current_x or player.direction.x <=0):
             player.on_right = False
+    
     def vertical_movement_collision(self):
         player = self.player.sprite
         player.apply_gravity()
@@ -134,18 +160,35 @@ class Level:
             player.on_celling = False
         if self.world_shift>0:
             player.rect.y += self.world_shift
+    
+    def check_death(self):
+        now = pygame.time.get_ticks()
+        if  self.player.sprite.rect.top >screen_height and  now > 1000 :
+            self.create_overworld(self.current_level,0)
+
+    def check_win(self):
+        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False):
+            self.create_overworld(self.current_level,self.new_max_level)
+
     def run(self):
+        now = pygame.time.get_ticks()
+        self.input()
+        #scoll
+        self.scroll_y()
+        # self.display_surface.blit(self.text_surf,self.text_rect)
         #level tiles
-        self.terrain_sprites.draw(self.display_surface)
         self.terrain_sprites.update(self.world_shift)
+        self.terrain_sprites.draw(self.display_surface)
+        # self.terrain_sprites.update(self.world_shift)
+        #coins 
+        self.coin_sprites.update(self.world_shift)
+        self.coin_sprites.draw(self.display_surface)
         #enemy
         self.enemy_sprites.update(self.world_shift)
         self.constraint_sprites.update(self.world_shift)
         self.enemy_collision_reverse()
         self.enemy_sprites.draw(self.display_surface)
         
-        #scoll
-        self.scroll_y()
         #player
         self.player.update()
         self.horizontal_movement_collision()
@@ -153,4 +196,8 @@ class Level:
         self.player.draw(self.display_surface)
         self.goal.draw(self.display_surface)
         self.goal.update(self.world_shift)
+        
+        if now - self.start_time > 10000:
+            self.check_death()
+            self.check_win()
        

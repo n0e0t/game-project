@@ -37,7 +37,7 @@ class Player(pygame.sprite.Sprite):
    
     def import_character_assets(self):
         character_path =  'C:/Users/pongsapadnet/Desktop/code/game/graphics/character/'
-        self.animations = {'idle':[],'run':[],'jump':[],'fall':[],'crouch':[],'crouchwalk':[],'roll':[]}
+        self.animations = {'idle':[],'run':[],'jump':[],'fall':[],'crouch':[],'crouchwalk':[],'attack':[]}
 
         for animation in self.animations.keys():
             full_path = character_path + animation
@@ -78,12 +78,12 @@ class Player(pygame.sprite.Sprite):
     def get_input(self):
         now = pygame.time.get_ticks()
         keys = pygame.key.get_pressed()
-        if keys[pygame.K_d] and self.rect.x < screen_width  :
+        if keys[pygame.K_d] :
             self.direction.x = 1
             self.facing_right = True
             if keys[pygame.K_a]:
                 self.direction.x =0
-        elif keys[pygame.K_a]and self.rect.x > 0 :
+        elif keys[pygame.K_a] :
             self.direction.x = -1
             self.facing_right = False
             if keys[pygame.K_d]:
@@ -109,25 +109,20 @@ class Player(pygame.sprite.Sprite):
             self.status = 'jump'
         elif self.direction.y > 1 and self.on_ground == False and now - self.last >=self.cooldown and not (self.on_left or self.on_right):
             self.status = 'fall'
-        elif keys[pygame.K_s] and self.on_ground == True and now - self.last >=self.cooldown :
-            self.status =  'crouch'
-            if keys[pygame.K_d] or keys[pygame.K_a]:
-                self.status = 'crouchwalk'
-                self.speed = 1
+        #elif keys[pygame.K_s] and self.on_ground == True and now - self.last >=self.cooldown :
+        #    self.status =  'crouch'
+        #    if keys[pygame.K_d] or keys[pygame.K_a]:
+        #        self.status = 'crouchwalk'
+        #        self.speed = 1
         
-        #elif keys[pygame.K_LSHIFT] and now - self.last >=self.cooldown and (keys[pygame.K_d] or keys[pygame.K_a])and self.on_ground :
-         #   if self.facing_right == False:
-          #      self.frame_index = 0
-           #     self.status = 'roll'
-            #    self.speed = 6
-             #   self.animation_speed = 0.2
-              #  self.last = now
-            #elif self.facing_right == True:
-             #   self.frame_index = 0
-              #  self.status = 'roll'
-               # self.speed = 6
-                #self.animation_speed = 0.2
-               # self.last = now
+        elif keys[pygame.K_LSHIFT] and now - self.last >=self.cooldown and (keys[pygame.K_d] or keys[pygame.K_a])and self.on_ground :
+                self.status = 'run'
+                self.speed = 6
+                self.animation_speed = 0.2
+        # elif keys[pygame.K_f] and self.on_ground :
+        #         self.status = 'attack'
+        #         self.speed = 0
+                  
                                 
         elif  now - self.last >=self.cooldown:
             if self.direction.x != 0 :

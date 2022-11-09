@@ -8,11 +8,11 @@
             "scaleInEditor": 1
         },
         "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_0.tmx": {
-            "scale": 1.5,
-            "selectedLayer": 1,
+            "scale": 1,
+            "selectedLayer": 2,
             "viewCenter": {
-                "x": 312,
-                "y": 153.66666666666669
+                "x": 444,
+                "y": 1731.5
             }
         },
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/BasicGreen.tsx": {
@@ -21,6 +21,10 @@
         },
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/DarkCastle.tsx": {
             "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/coin_tiles.tsx": {
+            "scaleInDock": 1,
             "scaleInEditor": 1
         },
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/player_tiles.tsx": {
@@ -41,7 +45,7 @@
         }
     },
     "last.exportedFilePath": "C:/Users/pongsapadnet/Desktop/code/game/levels/0",
-    "last.imagePath": "C:/Users/pongsapadnet/Desktop/code/game/graphics/map/Starter Tiles Platformer",
+    "last.imagePath": "C:/Users/pongsapadnet/Desktop/code/game/graphics/coin",
     "map.lastUsedExportFilter": "CSV files (*.csv)",
     "openFiles": [
         "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_0.tmx",
@@ -49,10 +53,12 @@
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/BasicGreen.tsx",
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/player_tiles.tsx",
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/slime_tiles.tsx",
-        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/setuptiles.tsx"
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/setuptiles.tsx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/coin_tiles.tsx"
     ],
     "project": "level_0.tiled-project",
     "recentFiles": [
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/coin_tiles.tsx",
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/setuptiles.tsx",
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/slime_tiles.tsx",
         "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/player_tiles.tsx",
