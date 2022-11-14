@@ -3,48 +3,154 @@ from setting import *
 from level import Level
 from game_data import level_0
 from overworld import Overworld 
+from ui import UI
+from menu import menu
+from score_board import Leaderboard
+from startpage import start_page
+import json
+
+score_data = {
+     "name" : "",
+     "score" : 0
+    }       
+
 
 class Game:
     def __init__(self):
-        self.max_level = 1
+        
+        #game attributes
+        self.max_level = 0
+        self.max_health = 100
+        self.cur_health = 100
+        self.coins = 0
+        self.score_data = score_data
+
+        #score board creation
+        self.score_board = Leaderboard(screen,self.create_overworld)   
+
+        #startpage]
+        self.start_page = start_page(screen,self.menu)    
+
+        #overworld creation
         self.overworld = Overworld(0,self.max_level,screen,self.create_level)
-        self.status = 'overworld'
+        self.start_overworld =0
+        
+        #menu creation
+        self.menu = menu(screen,self.create_overworld)
+        self.status = 'menu'
+
+        #user interface
+        self.ui = UI(screen) 
+        
+        #timer
         self.start_time = 0
+        self.time_count = 00.00
+
+        self.level = Level(0,screen,self.create_overworld,self.start_time,self.change_coins,self.change_health)
+        
 
     def create_level(self,current_level):
         now = pygame.time.get_ticks()
-        self.start_time = now
-        print(self.start_time)
-        self.level = Level(current_level,screen,self.create_overworld,self.start_time)
-        self.status = 'level'
+        if now - self.start_overworld > 100 :   
+            self.start_time = now
+            self.level = Level(current_level,screen,self.create_overworld,self.start_time,self.change_coins,self.change_health)
+            self.status = 'level'
 
-    
     def create_overworld(self,current_level,new_max_level):
         if new_max_level > self.max_level:
             self.max_level = new_max_level
         self.overworld = Overworld(current_level,self.max_level,screen,self.create_level)
         self.status = 'overworld'
 
+    def create_menu(self):
+        self.menu = menu(screen,self.create_overworld)
+        self.status = 'menu'
+
+    def create_scoreboard(self):
+        self.score_board = Leaderboard(screen,self.create_overworld)
+        self.status = 'scoreboard'
+
+    def create_startpage(self):
+        self.start_page = start_page
+
+    def change_coins(self,amount):
+        self.coins += amount
+        score_data['score'] += amount
+
+    def change_health(self,amount):
+        self.cur_health += amount
+        if self.cur_health > self.max_health:
+            self.cur_health = self.max_health
+
+    def check_game_over(self):
+        if self.cur_health <= 0 :
+            with open('score_file.json','r+') as score_file:
+                file_data = json.load(score_file)
+                file_data["scorefile"].append(score_data)
+                score_file.seek(0)
+                json.dump(file_data,score_file,indent=4)
+            self.cur_health = 100
+            self.coins = 0
+            self.max_level = 1
+            self.overworld = Overworld(0,self.max_level,screen,self.create_level)
+            self.status = 'scoreboard'
+
     def run(self):
         now = pygame.time.get_ticks()
-        if self.status == 'overworld':
+        if self.status == 'menu':
+            self.menu.run()
+            self.ui.show_name()
+            self.start_overworld = now
+        elif self.status == 'overworld':
             self.overworld.run()
+            self.ui.show_name()
+            self.ui.show_health(self.cur_health,self.max_health )
+            self.ui.show_coins(self.coins)
+        elif self.status == 'scoreboard':
+            self.score_board.run()
+            self.ui.show_name()
+            self.start_overworld = now
         else:
             self.level.run()
-        
-
-
+            self.ui.show_health(self.cur_health,self.max_health )
+            self.ui.show_coins(self.coins)
+            self.ui.show_name()
+            self.check_game_over()
+ 
 #pygame setup
 pygame.init()
 screen = pygame.display.set_mode((screen_width,screen_height))
 clock = pygame.time.Clock()
 game = Game()
+font = pygame.font.Font('../graphics/iu/ARCADEPI.TTF',20)
+user_text = ''
+count = 0
+text_x = screen_width/2
+text_y = screen_height/2
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+        if game.status == 'menu' and event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                score_data['name'] += user_text
+            elif event.key == pygame.K_BACKSPACE:
+                user_text = user_text[:-1]
+                count -=1
+                text_x += 6
+            elif count<=10:
+                user_text += event.unicode
+                count +=1
+                text_x -= 6
     if game.status =='level':
+        screen.fill('black')
+    elif game.status == 'menu':
+        screen.fill('black')
+        text_surface = font.render(user_text,True,'white')
+        screen.blit(text_surface,(text_x,text_y))
+    elif game.status == 'scoreboard':
         screen.fill('black')
     else:
         screen.fill('gray')
@@ -53,3 +159,4 @@ while True:
 
     pygame.display.update()
     clock.tick(60)
+

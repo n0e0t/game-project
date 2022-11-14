@@ -2,6 +2,7 @@ from os import walk
 import pygame
 from csv import reader
 from setting import tile_size
+import json
 
 def import_folder(path):
     surface_list = []
@@ -36,3 +37,4 @@ def import_cut_graphic(path):
             cut_tiles.append(new_surf)
     
     return cut_tiles
+

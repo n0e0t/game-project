@@ -38,7 +38,7 @@ class Icon(pygame.sprite.Sprite):
     def __init__(self,pos):
         super().__init__()
         self.pos = pos
-        self.image = pygame.image.load('C:/Users/pongsapadnet/Desktop/code/game/graphics/overworld/hat.png').convert_alpha()
+        self.image = pygame.image.load('../graphics/overworld/hat.png').convert_alpha()
         self.rect = self.image.get_rect(center = pos)
     
     def update(self):
@@ -98,7 +98,6 @@ class Overworld:
             elif keys[pygame.K_SPACE]:
                 now = pygame.time.get_ticks()
                 self.start_time = now
-                print(self.start_time)
                 self.create_level(self.current_level)
 
     def get_movement_data(self,target):
@@ -124,7 +123,7 @@ class Overworld:
         self.update_icon_pos()
         self.icon.update()
         self.nodes.update()
-        self.draw_paths()
+        # self.draw_paths()
         self.nodes.draw(self.display_surface)
         self.icon.draw(self.display_surface)
         

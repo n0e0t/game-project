@@ -1,0 +1,52 @@
+{
+    "scorefile": [
+        {
+            "name": "hello",
+            "score": 1
+        },
+        {
+            "name": "lll",
+            "score": 2
+        },
+        {
+            "name": "jj",
+            "score": 5
+        },
+        {
+            "name": "jj",
+            "score": 10
+        },
+        {
+            "name": "jjd",
+            "score": 3
+        },
+        {
+            "name": "sssssssss",
+            "score": 0
+        },
+        {
+            "name": "hello",
+            "score": 3
+        },
+        {
+            "name": "hellow",
+            "score": 2
+        },
+        {
+            "name": "hellow",
+            "score": 2
+        },
+        {
+            "name": "fdsfdsfsd",
+            "score": 1
+        },
+        {
+            "name": "fdsfdsfsd",
+            "score": 2
+        },
+        {
+            "name": "khjksh",
+            "score": 1
+        }
+    ]
+}

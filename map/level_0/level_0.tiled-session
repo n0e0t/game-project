@@ -3,7 +3,7 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "",
+    "activeFile": "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_2.tmx",
     "expandedProjectPaths": [
     ],
     "file.lastUsedOpenFilter": "All Files (*)",
@@ -11,17 +11,74 @@
         "BasicGreen.tsx": {
             "scaleInDock": 1,
             "scaleInEditor": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_0.tmx": {
+            "scale": 1,
+            "selectedLayer": 4,
+            "viewCenter": {
+                "x": 345,
+                "y": 1169.5
+            }
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_1.tmx": {
+            "scale": 1,
+            "selectedLayer": 1,
+            "viewCenter": {
+                "x": 366.5,
+                "y": 1643
+            }
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_2.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 340.5,
+                "y": 2961
+            }
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/BasicGreen.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/DarkCastle.tsx": {
+            "scaleInDock": 2
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/FireSet.tsx": {
+            "scaleInDock": 3,
+            "scaleInEditor": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/coin_tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/player_tiles.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/setuptiles.tsx": {
+            "scaleInDock": 1
+        },
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/slime_tiles.tsx": {
+            "scaleInDock": 1
         }
     },
-    "last.imagePath": "C:/Users/pongsapadnet/Desktop/code/game/graphics/map/Starter Tiles Platformer",
+    "last.exportedFilePath": "C:/Users/pongsapadnet/Desktop/code/game/levels/1",
+    "last.imagePath": "C:/Users/pongsapadnet/Desktop/code/game/graphics/iu/basic",
     "map.height": 200,
+    "map.lastUsedExportFilter": "CSV files (*.csv)",
+    "map.lastUsedFormat": "tmx",
     "map.tileHeight": 16,
     "map.tileWidth": 16,
     "map.width": 40,
     "openFiles": [
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_0.tmx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_1.tmx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_2.tmx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/FireSet.tsx"
     ],
     "project": "level_0.tiled-project",
     "recentFiles": [
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_0.tmx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_1.tmx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/tilesets/FireSet.tsx",
+        "C:/Users/pongsapadnet/Desktop/code/game/levels/level_data/level_2.tmx",
         "BasicGreen.tsx"
     ],
     "tileset.lastUsedFormat": "tsx",
