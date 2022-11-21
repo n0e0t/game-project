@@ -21,7 +21,7 @@ class Game:
         #audio
         self.level_bg_music = pygame.mixer.Sound('../audio/level_music.wav')
         self.overworld_bg_music = pygame.mixer.Sound('../audio/overworld_music.wav')
-        self.start_bg_music = pygame.mixer.Sound('../audio/Arknights (明日方舟) - Main Menu (Home) Theme Song.wav')
+        self.start_bg_music = pygame.mixer.Sound('../audio/start.wav')
 
         #game attributes
         self.max_level = 0  
