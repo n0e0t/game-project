@@ -13,11 +13,10 @@ class start_page:
     
     def input(self):
         keys = pygame.key.get_pressed()
-        # if keys[pygame.K_SPACE]:
-        #         self.create_menu()
+        if keys[pygame.K_SPACE]:
+                self.create_menu()
 
     def run(self):
-        # self.draw_text("darkkkk",self.font,'white',100,100)
         self.input()
 
 class Buttonstart:

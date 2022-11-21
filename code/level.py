@@ -294,7 +294,7 @@ class Level:
         #level tiles
         self.terrain_sprites.update(self.world_shift)
         self.terrain_sprites.draw(self.display_surface)
-        # self.terrain_sprites.update(self.world_shift)
+        
         #coins 
         self.coin_sprites.update(self.world_shift)
         self.coin_sprites.draw(self.display_surface)

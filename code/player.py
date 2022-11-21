@@ -141,11 +141,6 @@ class Player(pygame.sprite.Sprite):
             self.status = 'jump'
         elif self.direction.y > 1 and self.on_ground == False and now - self.last >=self.cooldown :
             self.status = 'fall'
-        #elif keys[pygame.K_s] and self.on_ground == True and now - self.last >=self.cooldown :
-        #    self.status =  'crouch'
-        #    if keys[pygame.K_d] or keys[pygame.K_a]:
-        #        self.status = 'crouchwalk'
-        #        self.speed = 1
         
         elif keys[pygame.K_LSHIFT] and now - self.last >=self.cooldown and (keys[pygame.K_d] or keys[pygame.K_a])and self.on_ground :
                 self.status = 'dash'
