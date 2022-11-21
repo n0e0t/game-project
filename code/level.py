@@ -1,7 +1,7 @@
 from re import T
 import pygame
 from player import Player
-from tiles import Tile, StaticTile,AnimateTile,Coin,heal       
+from tiles import Tile, StaticTile,AnimateTile,Coin,heal,portal      
 from setting import tile_size, screen_height
 from support import *
 from enemy import *
@@ -18,7 +18,16 @@ class Level:
         level_content = level_data['content']
         self.new_max_level = level_data['unlock']
         self.start_time = start_time
+        self.enemydamage = -10
+        self.imu = 0
 
+        # audio
+        self.coin_sound = pygame.mixer.Sound('../audio/effects/coin.wav')
+        self.coin_sound.set_volume(0.5)
+        self.stomp_sound = pygame.mixer.Sound('../audio/effects/stomp.wav')
+        self.stomp_sound.set_volume(0.5)
+        self.heal_sound = pygame.mixer.Sound('../audio/effects/Suck 1V2.wav')
+        self.heal_sound.set_volume(0.5)
         #dust
         self.dust_sprite = pygame.sprite.GroupSingle()
         self.player_on_ground = False
@@ -88,8 +97,10 @@ class Level:
         keys = pygame.key.get_pressed()
         if keys[pygame.K_RETURN]:
             self.create_overworld(self.current_level,self.new_max_level)
-        if keys[pygame.K_ESCAPE]:
-            self.create_overworld(self.current_level,0)
+        elif keys[pygame.K_r]:
+            self.change_health(100)
+        elif keys[pygame.K_t]:
+            self.imu ^= 1
 
     def create_tile_group(self,layout,type):
         sprite_group = pygame.sprite.Group()
@@ -106,9 +117,9 @@ class Level:
                         elif self.current_level == 1:
                             terrain_tile_list = import_cut_graphic('../graphics/map/Starter Tiles Platformer/DarkCastle.png')  
                         elif self.current_level == 2:
-                            terrain_tile_list = import_cut_graphic('../graphics/map/Starter Tiles Platformer/BasicGreen.png') 
+                            terrain_tile_list = import_cut_graphic('../graphics/map/Starter Tiles Platformer/FireSet.png') 
                         elif self.current_level == 3:
-                            terrain_tile_list = import_cut_graphic('../graphics/map/Starter Tiles Platformer/BasicGreen.png') 
+                            terrain_tile_list = import_cut_graphic('../graphics/map/Starter Tiles Platformer/IceSet.png') 
                         tile_surface = terrain_tile_list[int(val)]
                         sprite = StaticTile(tile_size,x,y,tile_surface)
                         sprite_group.add(sprite)
@@ -116,18 +127,29 @@ class Level:
                     if type == 'enemies':
                         if self.current_level == 0:
                             sprite = Enemy(tile_size,x,y)
+                            self.enemydamage = -10
                         elif self.current_level == 1:
                             sprite = Enemy2(tile_size,x,y)
+                            self.enemydamage = -20
                         elif self.current_level == 2:
                             sprite = Enemy3(tile_size,x,y)
+                            self.enemydamage = -30
                         elif self.current_level == 3:
                             sprite = Enemy4(tile_size,x,y)
+                            self.enemydamage = -40
 
                     if type == 'constraint':
                       sprite = Tile(tile_size,x,y)
 
                     if type == 'coins':
-                        sprite = Coin(tile_size,x,y,'../graphics/coin/gold',1)
+                        if self.current_level == 0:
+                            sprite = Coin(tile_size,x,y,'../graphics/coin/gold',1)
+                        elif self.current_level == 1:
+                            sprite = Coin(tile_size,x,y,'../graphics/coin/gold',2)
+                        elif self.current_level == 2:
+                            sprite = Coin(tile_size,x,y,'../graphics/coin/gold',3)
+                        elif self.current_level == 3:
+                            sprite = Coin(tile_size,x,y,'../graphics/coin/gold',4)
                     
                     if type == 'heal':
                         sprite = heal(tile_size,x,y,'../graphics/heal')
@@ -145,8 +167,7 @@ class Level:
                     sprite = Player((x,y),self.display_surface,self.create_jump_particles,change_health)
                     self.player.add(sprite)
                 if val == '8':
-                    hat_surface = pygame.image.load('../graphics/enemy/slime/blueslime/idle/slimeidle1.png').convert_alpha()
-                    sprite = StaticTile(tile_size,x,y,hat_surface)
+                    sprite = portal(tile_size,x,y,'../graphics/portal')
                     self.goal.add(sprite)
 
     def enemy_collision_reverse(self):
@@ -213,21 +234,29 @@ class Level:
         now = pygame.time.get_ticks()
         if  self.player.sprite.rect.top >screen_height and  now > 1000 :
             self.change_health(-50)
-            self.create_overworld(self.current_level,0)
+            self.create_overworld(self.current_level,self.current_level)
 
     def check_win(self):
-        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False):
-            self.change_health(50)
-            self.create_overworld(self.current_level,self.new_max_level)
+        keys = pygame.key.get_pressed()
+        if pygame.sprite.spritecollide(self.player.sprite,self.goal,False) and keys[pygame.K_SPACE]:
+            if self.current_level == 3:
+                self.create_overworld(self.current_level,self.current_level)
+                self.change_health(50)
+                self.change_coins(20)
+            else :
+                self.change_health(50)
+                self.create_overworld(self.current_level,self.new_max_level)
 
     def check_coin_collisions(self):
         collided_coins = pygame.sprite.spritecollide(self.player.sprite,self.coin_sprites,True)
         if collided_coins:
+            self.coin_sound.play()
             for coin in collided_coins:
                 self.change_coins(coin.value)
     def check_heal_collisions(self):
         collided_heal = pygame.sprite.spritecollide(self.player.sprite,self.heal_sprites,True)
         if collided_heal:
+                self.heal_sound.play()
                 self.change_health(20)
 
     def check_enemy_collision(self):
@@ -239,17 +268,19 @@ class Level:
                 enemy_top = enemy.rect.top
                 player_bottom = self.player.sprite.rect.bottom
                 if enemy_top < player_bottom < enemy_center and self.player.sprite.direction.y >= 0:
+                    self.stomp_sound.play()
                     self.player.sprite.direction.y = -8
                     explosion_sprite = ParticleEffect(enemy.rect.center,'explosion') 
                     self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
                 elif self.player.sprite.status == 'attack2':
+                    self.stomp_sound.play()
                     explosion_sprite = ParticleEffect(enemy.rect.center,'explosion') 
                     self.explosion_sprites.add(explosion_sprite)
                     enemy.kill()
                 else:
-                    if self.player_on_ground:
-                     self.player.sprite.get_damage()
+                    if self.player_on_ground and self.imu == 0:
+                     self.player.sprite.get_damage(self.enemydamage)
 
     def run(self):
         now = pygame.time.get_ticks()
@@ -292,7 +323,7 @@ class Level:
         self.goal.draw(self.display_surface)
         self.goal.update(self.world_shift)
         
-        if now - self.start_time > 6000:
+        if now - self.start_time > 5500:
             player.get_input()
             self.check_death()
             self.check_win()

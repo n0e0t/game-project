@@ -32,7 +32,7 @@ class Player(pygame.sprite.Sprite):
         self.cooldown = 900
         self.jumpcount = 0
         self.lastjump = -300
-        self.jumpcooldown = 250
+        self.jumpcooldown = 200
         self.collision_rect = pygame.Rect(self.rect.topleft,(30,40))
 
         #health management
@@ -49,7 +49,12 @@ class Player(pygame.sprite.Sprite):
         self.on_left = False
         self.on_right = False
         self.on_wall =False
-   
+
+        #audio
+        self.jump_sound = pygame.mixer.Sound('../audio/effects/jump.wav')
+        self.jump_sound.set_volume(0.25)
+        self.hit_sound = pygame.mixer.Sound('../audio/effects/hit.wav')
+        self.hit_sound.set_volume(0.5)
     def import_character_assets(self):
         character_path =  '../graphics/character/'
         self.animations = {'idle':[],'run':[],'jump':[],'fall':[],'crouch':[],'crouchwalk':[],'attack':[],'dash':[],'hit':[],'attack2':[]}
@@ -146,7 +151,9 @@ class Player(pygame.sprite.Sprite):
                 self.status = 'dash'
                 self.speed = 6
                 self.animation_speed = 0.2
-        elif keys[pygame.K_f] and self.on_ground :
+                if keys[pygame.K_d] and keys[pygame.K_a]:
+                    self.status = 'idle'
+        elif keys[pygame.K_e] and self.on_ground :
                 self.status = 'attack2'
                 self.speed = 0
 
@@ -172,10 +179,12 @@ class Player(pygame.sprite.Sprite):
    
     def jump(self):
         self.direction.y = self.jump_speed
+        self.jump_sound.play()
     
-    def get_damage(self):
+    def get_damage(self,damage):
         if not self.invisible:
-            self.change_health(-10)
+            self.hit_sound.play()
+            self.change_health(damage)
             self.invisible = True
             self.hurt_time = pygame.time.get_ticks()
     

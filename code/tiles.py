@@ -50,5 +50,12 @@ class heal(AnimateTile):
         center_x = x 
         center_y = y 
         self.rect = self.image.get_rect(topleft = (center_x,center_y))
+
+class portal(AnimateTile):
+    def __init__(self, size, x, y, path):
+        super().__init__(size, x, y, path)
+        center_x = x 
+        center_y = y 
+        self.rect = self.image.get_rect(center = (center_x,center_y+3))
         
 

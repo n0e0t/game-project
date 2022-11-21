@@ -5,8 +5,8 @@ from game_data import level_0
 from overworld import Overworld 
 from ui import UI
 from menu import menu
-from score_board import Leaderboard
-from startpage import start_page
+from score_board import *
+from startpage import *
 import json
 
 score_data = {
@@ -18,26 +18,39 @@ score_data = {
 class Game:
     def __init__(self):
         
+        #audio
+        self.level_bg_music = pygame.mixer.Sound('../audio/level_music.wav')
+        self.overworld_bg_music = pygame.mixer.Sound('../audio/overworld_music.wav')
+        self.start_bg_music = pygame.mixer.Sound('../audio/Arknights (明日方舟) - Main Menu (Home) Theme Song.wav')
+
         #game attributes
-        self.max_level = 0
+        self.max_level = 0  
         self.max_health = 100
         self.cur_health = 100
         self.coins = 0
         self.score_data = score_data
+        self.start_menu = 0
 
         #score board creation
         self.score_board = Leaderboard(screen,self.create_overworld)   
-
-        #startpage]
-        self.start_page = start_page(screen,self.menu)    
-
+  
         #overworld creation
-        self.overworld = Overworld(0,self.max_level,screen,self.create_level)
+        self.overworld = Overworld(0,self.max_level,screen,self.create_level,self.create_startpage)
         self.start_overworld =0
         
         #menu creation
-        self.menu = menu(screen,self.create_overworld)
-        self.status = 'menu'
+        self.menu = menu(screen,self.create_overworld,self.start_menu,self.create_startpage)
+        self.status = 'start_page'
+
+        #startpage
+        self.start_page = start_page(screen,self.create_menu)  
+        self.seescoreboard = seeLeaderboard(screen,self.create_startpage)
+
+        #button
+        self.buttonstart = Buttonstart(screen,"START GAME",200,60,(screen_width/2 - 90,200),6,self.create_menu)
+        self.buttonscoreboard = Buttonstart(screen,"SCORE BOARD",200,60,(screen_width/2 - 90,300),6,self.create_seescoreboard)
+        self.buttonexit = Buttonstart(screen,"EXIT",200,60,(screen_width/2 - 90,400),6,self.quitgame)
+        
 
         #user interface
         self.ui = UI(screen) 
@@ -55,23 +68,38 @@ class Game:
             self.start_time = now
             self.level = Level(current_level,screen,self.create_overworld,self.start_time,self.change_coins,self.change_health)
             self.status = 'level'
+            self.overworld_bg_music.stop()
+            self.level_bg_music.play(loops= -1)
+            self.level_bg_music.set_volume(0.25)
 
     def create_overworld(self,current_level,new_max_level):
-        if new_max_level > self.max_level:
+        if new_max_level >= self.max_level:
             self.max_level = new_max_level
-        self.overworld = Overworld(current_level,self.max_level,screen,self.create_level)
+        self.overworld = Overworld(current_level,self.max_level,screen,self.create_level,self.create_startpage)
         self.status = 'overworld'
+        self.level_bg_music.stop()
+        self.start_bg_music.stop()
+        self.overworld_bg_music.play(loops= -1)
+        self.overworld_bg_music.set_volume(0.25)
 
     def create_menu(self):
-        self.menu = menu(screen,self.create_overworld)
+        self.menu = menu(screen,self.create_overworld,self.start_menu,self.create_startpage)
         self.status = 'menu'
 
     def create_scoreboard(self):
         self.score_board = Leaderboard(screen,self.create_overworld)
         self.status = 'scoreboard'
+        self.level_bg_music.stop()
+
+    def create_seescoreboard(self):
+        self.seescore_board = seeLeaderboard(screen,self.create_startpage)
+        self.status = 'seescoreboard'
 
     def create_startpage(self):
-        self.start_page = start_page
+        self.start_page = start_page(screen,self.create_menu)
+        self.status = 'start_page'
+        score_data['name'] = ''
+        self.overworld_bg_music.stop()
 
     def change_coins(self,amount):
         self.coins += amount
@@ -91,9 +119,14 @@ class Game:
                 json.dump(file_data,score_file,indent=4)
             self.cur_health = 100
             self.coins = 0
-            self.max_level = 1
-            self.overworld = Overworld(0,self.max_level,screen,self.create_level)
+            self.max_level = 0
+            self.overworld = Overworld(0,self.max_level,screen,self.create_level,self.create_startpage)
             self.status = 'scoreboard'
+    
+    def quitgame(self):
+        pygame.quit()
+        sys.exit()
+
 
     def run(self):
         now = pygame.time.get_ticks()
@@ -110,11 +143,25 @@ class Game:
             self.score_board.run()
             self.ui.show_name()
             self.start_overworld = now
+        elif self.status == 'seescoreboard':
+            self.seescoreboard.run()
+            self.ui.show_name()
+        elif self.status == 'start_page':
+            self.start_bg_music.play(loops= -1)
+            self.start_bg_music.set_volume(0.25)
+            self.start_page.run()
+            self.ui.show_name()
+            self.ui.show_logo()
+            self.buttonstart.draw()
+            self.buttonscoreboard.draw()
+            self.buttonexit.draw()
+            self.start_menu = now
         else:
             self.level.run()
             self.ui.show_health(self.cur_health,self.max_health )
             self.ui.show_coins(self.coins)
             self.ui.show_name()
+            self.start_overworld = now
             self.check_game_over()
  
 #pygame setup
@@ -136,11 +183,12 @@ while True:
         if game.status == 'menu' and event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 score_data['name'] += user_text
+
             elif event.key == pygame.K_BACKSPACE:
                 user_text = user_text[:-1]
                 count -=1
                 text_x += 6
-            elif count<=10:
+            elif count<=10 and not event.key == pygame.K_ESCAPE:
                 user_text += event.unicode
                 count +=1
                 text_x -= 6
@@ -151,6 +199,10 @@ while True:
         text_surface = font.render(user_text,True,'white')
         screen.blit(text_surface,(text_x,text_y))
     elif game.status == 'scoreboard':
+        screen.fill('black')
+    elif game.status == 'start_page':
+        screen.fill('black')
+    elif game.status == 'seescoreboard':
         screen.fill('black')
     else:
         screen.fill('gray')

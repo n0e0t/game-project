@@ -28,7 +28,7 @@ class Enemy2(AnimateTile):
     def __init__(self, size, x, y):
         super().__init__(size, x, y,'../graphics/enemy/slime/redslime/run')
         self.rect.y += size*1.1 - self.image.get_size()[1]
-        self.speed = randint(1,2)
+        self.speed = randint(1,3)
     
     def move(self):
         self.rect.x += self.speed

@@ -20,6 +20,8 @@ class UI:
 
         #name
         self.name = pygame.image.load('../graphics/iu/name.png')
+        #gamelogo
+        self.logo = pygame.image.load('../graphics/logo/1.png')
         
 
     def show_health(self,current,full):
@@ -38,3 +40,6 @@ class UI:
     
     def show_name(self):
         self.display_surface.blit(self.name,(420,35)) 
+    
+    def show_logo(self):
+        self.display_surface.blit(self.logo,(210,100))
